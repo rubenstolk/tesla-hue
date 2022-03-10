@@ -1,0 +1,15 @@
+{
+  "name": "tesla-hue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-hue-api": "^5.0.0-beta.13",
+    "tesla-api-request": "^1.0.16"
+  }
+}
