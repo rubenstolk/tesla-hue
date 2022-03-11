@@ -16,6 +16,7 @@ const isGeofenced = (input, center, distance) => {
 };
 
 let hue;
+const previous = {};
 
 const run = async () => {
   hue = hue || await HUE.api.createLocal(CONFIG.HUE.HOST).connect(CONFIG.HUE.USER);
@@ -34,14 +35,14 @@ const run = async () => {
 
     await fs.mkdir(dir, { recursive: true });
 
-    let previous;
-
-    try {
-      previous = require(file);
+    if (!previous[name]) {
+      try {
+        previous[name] = require(file);
+      }
+      catch (ex) {}
     }
-    catch (ex) {}
 
-    const wasHome = previous && isGeofenced(previous.drive_state, CONFIG.GEOFENCES.Home, 0.2);
+    const wasHome = previous[name] && isGeofenced(previous[name].drive_state, CONFIG.GEOFENCES.Home, 0.2);
     const isHome = isGeofenced(current.drive_state, CONFIG.GEOFENCES.Home, 0.2);
     
     await fs.writeFile(file, JSON.stringify(current, null, 2));
@@ -54,6 +55,8 @@ const run = async () => {
         await hue.lights.setLightState(vehicle.HUE_LIGHT.ID, previousState);
       }, 10 * 60 * 1000);
     }
+
+    previous[name] = current;
   }
 
   await sleep(15000);
